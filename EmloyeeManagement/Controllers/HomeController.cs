@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeManagement.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         IEmployeeRepository _employeeRepository;
@@ -20,12 +22,14 @@ namespace EmployeeManagement.Controllers
             this.hostEnvironment = hostEnvironment;
         }
 
+        [AllowAnonymous]
         public ViewResult Index()
         {
             var model = _employeeRepository.GetAllEmployees();
             return View(model);
         }
 
+        [AllowAnonymous]
         public ActionResult Details(int id)
         {
             Employee model = _employeeRepository.GetEmployeeById(id);
