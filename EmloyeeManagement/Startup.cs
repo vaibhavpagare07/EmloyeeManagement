@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeManagement.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +30,14 @@ namespace EmloyeeManagement
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<AppDBContext>(option => option.UseSqlServer(configuration.GetConnectionString("EmployeeDBConnection")));
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            //services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddMvc(config => {
+                var policy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+                config.EnableEndpointRouting = false;
+            });
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
@@ -50,6 +59,7 @@ namespace EmloyeeManagement
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvc(routes => { routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}"); });
+
             
         }
     }
