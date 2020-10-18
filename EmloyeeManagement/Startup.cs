@@ -39,11 +39,12 @@ namespace EmloyeeManagement
                 config.EnableEndpointRouting = false;
             });
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 0;
                 options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
             }).AddEntityFrameworkStores<AppDBContext>();
         }
 
